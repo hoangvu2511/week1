@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal"
-
     android:background="@color/colorGray"
     android:layout_marginBottom="10sp"
-    android:paddingStart="10sp"
-    android:paddingEnd="10sp"
-    android:paddingBottom="10sp"
-    >
+    android:padding="10sp">
     <ImageView
-        android:layout_width="@dimen/img_size"
-        android:layout_height="@dimen/img_size"
-        android:id="@+id/imgV"/>
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/imgV"
+        android:scaleType="fitXY"
+        tools:src="@drawable/ic_launcher_background"
+        />
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingLeft="10sp">
+        android:paddingStart="10sp"
+        android:paddingEnd="10sp">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,8 +31,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/overview"
+            android:layout_marginTop="10dp"
             android:textSize="17sp"
-            android:lines="8"
+            android:lines="3"
             android:ellipsize="end"
             android:id="@+id/overView"/>
     </LinearLayout>

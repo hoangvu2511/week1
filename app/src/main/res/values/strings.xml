@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Flicks</string>
-    <string name="title">title</string>
-    <string name="overview">overview</string>
+    <string name="app_name">Flicks: Movie for you</string>
+    <string name="title">Title</string>
+    <string name="overview">Overview</string>
 </resources>

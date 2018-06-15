@@ -1,10 +1,12 @@
 package com.example.vuhoang.flicks;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.TextView;
 
 import com.example.vuhoang.flicks.Api.InterfaceApi;
 import com.example.vuhoang.flicks.Api.RetrofitClient;
@@ -26,12 +28,18 @@ public class MainActivity extends AppCompatActivity {
     SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
+    @BindView(R.id.pageNum)
+    TextView pageNum;
 
-    private ListMovies listMovies;
+    private RecyclerView.LayoutManager manager;
+
+    private static ListMovies listMovies;
     private List<Movie> movies;
-    private AdapterRecyclerView adapterRecyclerView;
+    private ComplexAdapterRecyclerView adapterRecyclerView;
     private int page = 1;
+    private int totalPage = 0;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,14 +47,17 @@ public class MainActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         if(movies==null){
             movies = new ArrayList<>();
-            setList();
             getMovies();
+            setList();
         }
         else
             adapterRecyclerView.setData(movies);
 
     }
 
+    /**
+     * call api and get list of now playing movies
+     */
     private void getMovies() {
         RetrofitClient.getApi().getNowPlaying(InterfaceApi.Api_key,page, Locale.getDefault().getLanguage())
                 .enqueue(new Callback<ListMovies>() {
@@ -55,36 +66,60 @@ public class MainActivity extends AppCompatActivity {
                         int statusCode = response.code();
                         if (statusCode == 200) {
                             listMovies = response.body();
-                            movies = listMovies.getMovies();
+                            totalPage = listMovies.getTotalPages();
+                            movies.addAll(listMovies.getMovies());
                             adapterRecyclerView.setData(movies);
+                            setPage();
                         }
-                        long b =100;
                     }
                     @Override
                     public void onFailure(Call<ListMovies> call, Throwable t) {
 
                     }
                 });
+        page++;
     }
 
     private void setList() {
-        RecyclerView.LayoutManager manager = new LinearLayoutManager(this);
+        manager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(manager);
 
-        adapterRecyclerView = new AdapterRecyclerView(MainActivity.this);
+        adapterRecyclerView = new ComplexAdapterRecyclerView(MainActivity.this);
         if(movies == null)
             movies = new ArrayList<>();
         adapterRecyclerView.setData(movies);
 
+
+
         recyclerView.setAdapter(adapterRecyclerView);
 
         this.recyclerView.setAdapter(adapterRecyclerView);
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(false);
                 getMovies();
             }
         });
+
     }
 
+    private void setPage(){
+        String pg ;
+        if (totalPage != 0) {
+            pg = "page: " + String.valueOf(page-1) + " / " + String.valueOf(totalPage) ;
+            pageNum.setText(pg);
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }
