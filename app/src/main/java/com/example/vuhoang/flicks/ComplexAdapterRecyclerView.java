@@ -23,8 +23,10 @@ import jp.wasabeef.glide.transformations.RoundedCornersTransformation;
 public class ComplexAdapterRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Movie> listMovies;
     private Context ctx;
+    private IClickListener listener;
+
     private final int BACK_DROP = -1 , POSTER = 1;
-    String urlImg = InterfaceApi.BASE_IMAGES_URL + "w200" ;
+    public String urlImg = InterfaceApi.BASE_IMAGES_URL + "w200" ;
 
     public void setData(List<Movie> movies){
         this.listMovies = movies;
@@ -33,6 +35,10 @@ public class ComplexAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
 
     public ComplexAdapterRecyclerView(Context context){
         this.ctx = context;
+    }
+
+    public void setListener(ComplexAdapterRecyclerView.IClickListener listener){
+        this.listener = listener;
     }
 
     @NonNull
@@ -111,7 +117,14 @@ public class ComplexAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
 
     }
 
-    private class ViewHolderPoster extends RecyclerView.ViewHolder {
+    /**
+     * Interface for click listeners for this adapter
+     */
+    public interface IClickListener {
+        void onItemClick(Movie movie);
+    }
+
+    private class ViewHolderPoster extends RecyclerView.ViewHolder implements View.OnClickListener{
         public ImageView poster;
         public TextView title;
         public TextView overView;
@@ -121,16 +134,25 @@ public class ComplexAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
             poster = v1.findViewById(R.id.imgV);
             title = v1.findViewById(R.id.ti_tle);
             overView = v1.findViewById(R.id.overView);
+            itemView.setOnClickListener(this);
+        }
 
+        @Override
+        public void onClick(View view) {
+            listener.onItemClick(listMovies.get(getAdapterPosition()));
         }
     }
 
-    private class ViewHolderBackDrop extends RecyclerView.ViewHolder {
+    private class ViewHolderBackDrop extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView backDrop;
         public ViewHolderBackDrop(View v2) {
             super(v2);
             backDrop = v2.findViewById(R.id.imgBackDrop);
-
+            itemView.setOnClickListener(this);
+        }
+        @Override
+        public void onClick(View view) {
+            listener.onItemClick(listMovies.get(getAdapterPosition()));
         }
     }
 }

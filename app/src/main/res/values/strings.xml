@@ -2,4 +2,7 @@
     <string name="app_name">Flicks: Movie for you</string>
     <string name="title">Title</string>
     <string name="overview">Overview</string>
+    <string name="rate">Rate: </string>
+    <string name="popularity">Popularity: </string>
+    <string name="URL">http://image.tmdb.org/t/p/w200</string>
 </resources>

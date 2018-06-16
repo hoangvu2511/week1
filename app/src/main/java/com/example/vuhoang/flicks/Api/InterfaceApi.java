@@ -1,9 +1,11 @@
 package com.example.vuhoang.flicks.Api;
 
 import com.example.vuhoang.flicks.GetMovie.ListMovies;
+import com.example.vuhoang.flicks.Trailers.GetTrailers;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface InterfaceApi {
@@ -15,6 +17,9 @@ public interface InterfaceApi {
     Call<ListMovies> getNowPlaying(@Query("api_key") String API_KEY,
                                    @Query("page") int page,
                                    @Query("language") String language);
+
+    @GET("/3/movie/{id}/trailers")
+    Call<GetTrailers> getListTrailers(@Path("id") int id, @Query("api_key") String api);
 
 
 }
