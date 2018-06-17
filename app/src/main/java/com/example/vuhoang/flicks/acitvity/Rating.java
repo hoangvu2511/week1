@@ -1,7 +1,8 @@
 package com.example.vuhoang.flicks.acitvity;
 
 import android.os.Bundle;
-import android.widget.ImageView;
+import android.support.v7.widget.AppCompatRatingBar;
+import android.view.View;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -27,28 +28,35 @@ public class Rating extends YouTubeBaseActivity implements YouTubePlayer.OnIniti
     private Movie movie;
     private YouTubePlayer player;
 
-    @BindView(R.id.player)
-    YouTubePlayerView playerView;
+    @BindView(R.id.player) YouTubePlayerView playerView;
 
-    @BindView(R.id.imgDetail)
-    ImageView imgDetail;
+    @BindView(R.id.error) TextView error;
 
-    @BindView(R.id.title_detail)
-    TextView title;
+    @BindView(R.id.title_detail) TextView title;
 
-    @BindView(R.id.popularity)
-    TextView popularity;
+    @BindView(R.id.rating) AppCompatRatingBar rate;
 
-    @BindView(R.id.rating)
-    RatingBar rate;
+    @BindView(R.id.releaseDate) TextView releaseDate;
 
-    @BindString(R.string.URL)
-    String URL;
+    @BindView(R.id.popularity) TextView popularity;
 
-    @BindString(R.string.popularity)
-    String pop;
+    @BindView(R.id.adult) TextView adult;
 
-    public static final String YOUTUBE_API_KEY = "AIzaSyBRUzRbT3E3YoeeG0Gc7_hG8u5pGV4EFKE";
+    @BindView(R.id.vote_average) TextView vote;
+
+    @BindView(R.id.overViewDetail) TextView overView;
+
+    @BindString(R.string.URL) String URL;
+
+    @BindString(R.string.popularity) String pop;
+
+    @BindString(R.string.release_date) String release;
+
+    @BindString(R.string.adult) String isAdult;
+
+    @BindString(R.string.voteAvg) String voteAvg;
+
+    @BindString(R.string.API_KEY_YOUTUBE) String YOUTUBE_API_KEY;
 
     private YouTubePlayer.PlaybackEventListener playbackEventListener = new YouTubePlayer.PlaybackEventListener() {
         @Override
@@ -113,21 +121,38 @@ public class Rating extends YouTubeBaseActivity implements YouTubePlayer.OnIniti
 
     private boolean isFullScreen = false;
 
+    private boolean isPopular;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rating);
         ButterKnife.bind(this);
         movie = (Movie) getIntent().getSerializableExtra(MainActivity.MOVIE);
+        isPopular = getIntent().getBooleanExtra(MainActivity.IS_POPULAR,true);
+
         title.setText(movie.getTitle());
+
+        release += movie.getReleaseDate();
+        releaseDate.setText(release);
+
         pop += String.valueOf(movie.getPopularity());
         popularity.setText(pop);
+
+        isAdult += movie.getAdult()?"Yes":"No";
+        adult.setText(isAdult);
+
+        voteAvg += String.valueOf(movie.getVoteAverage());
+        vote.setText(voteAvg);
+
+        overView.setText(movie.getOverview());
+
         rate.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-                float rates = ratingBar.getRating();
             }
         });
+
         playerView.initialize(YOUTUBE_API_KEY,this);
     }
 
@@ -156,7 +181,13 @@ public class Rating extends YouTubeBaseActivity implements YouTubePlayer.OnIniti
             @Override
             public void onResponse(Call<GetTrailers> call, Response<GetTrailers> response) {
                 listTrailers = response.body();
-                player.cueVideo(listTrailers.getYoutube().get(0).getSource());
+                if (listTrailers.getYoutube().size()!= 0)
+                    if (isPopular)
+                        player.loadVideo(listTrailers.getYoutube().get(0).getSource());
+                    else
+                        player.cueVideo(listTrailers.getYoutube().get(0).getSource());
+                else
+                    error.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -176,7 +207,5 @@ public class Rating extends YouTubeBaseActivity implements YouTubePlayer.OnIniti
         }
     }
 
-    private void setPlayVid(){
-        if (movie.getPopularity() > movie.getVoteAverage()){}
-    }
+
 }

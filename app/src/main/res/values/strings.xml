@@ -5,4 +5,9 @@
     <string name="rate">Rate: </string>
     <string name="popularity">Popularity: </string>
     <string name="URL">http://image.tmdb.org/t/p/w200</string>
+    <string name="Error">There is no trailer for this movie</string>
+    <string name="release_date">Release date: </string>
+    <string name="adult">Adult: </string>
+    <string name="voteAvg">Vote average: </string>
+    <string name="API_KEY_YOUTUBE">AIzaSyBRUzRbT3E3YoeeG0Gc7_hG8u5pGV4EFKE</string>
 </resources>

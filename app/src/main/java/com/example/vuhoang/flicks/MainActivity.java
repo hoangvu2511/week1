@@ -9,11 +9,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.TextView;
 
-import com.example.vuhoang.flicks.acitvity.Rating;
 import com.example.vuhoang.flicks.Api.InterfaceApi;
 import com.example.vuhoang.flicks.Api.RetrofitClient;
 import com.example.vuhoang.flicks.GetMovie.ListMovies;
 import com.example.vuhoang.flicks.GetMovie.Movie;
+import com.example.vuhoang.flicks.acitvity.Rating;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,33 +35,33 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView.LayoutManager manager;
 
-    private static ListMovies listMovies;
+    private ListMovies listMovies;
     private List<Movie> movies;
     private ComplexAdapterRecyclerView adapterRecyclerView;
-    private int page = 1;
+    private int page = 0;
 
     public String LIST_KEY = "listMovies";
     public String PARCEL_KEY = "key_manager";
     public String PAGE = "number_page";
     public static String MOVIE = "Movie";
+    public static String IS_POPULAR = "isPopular";
+    boolean isParcelable = false;
 
-    Parcelable parcelable;
+    private static boolean orenta = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        setPage();
-        if (listMovies!= null)
-            movies = listMovies.getMovies();
-        if(movies==null){
-            movies = new ArrayList<>();
-            getMovies();
-            setList();
-        }
-        else
-            adapterRecyclerView.setData(movies);
+        if(!orenta)
+            if(movies==null){
+                movies = new ArrayList<>();
+                getMovies();
+                setList();
+            }
+            else
+                adapterRecyclerView.setData(movies);
 
     }
 
@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
      * call api and get list of now playing movies
      */
     private void getMovies() {
+        page++;
         RetrofitClient.getApi().getNowPlaying(InterfaceApi.Api_key,page, Locale.getDefault().getLanguage())
                 .enqueue(new Callback<ListMovies>() {
                     @Override
@@ -76,7 +77,8 @@ public class MainActivity extends AppCompatActivity {
                         int statusCode = response.code();
                         if (statusCode == 200) {
                             listMovies = response.body();
-                            movies.addAll(listMovies.getMovies());
+//                            movies.addAll(listMovies.getMovies());
+                            movies = listMovies.getMovies();
                             adapterRecyclerView.setData(movies);
                         }
                     }
@@ -85,24 +87,36 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                 });
-        page++;
+        setPage();
     }
 
     private void setList() {
-        manager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(manager);
+        if (isParcelable) {
+            movies = listMovies.getMovies();
+        }
 
         adapterRecyclerView = new ComplexAdapterRecyclerView(MainActivity.this);
-        if(movies == null)
+
+        if (manager==null){
+            manager = new LinearLayoutManager(this);
+        }
+
+        if(movies == null){
             movies = new ArrayList<>();
+        }
+
+        recyclerView.setLayoutManager(manager);
+
         adapterRecyclerView.setData(movies);
 
         recyclerView.setAdapter(adapterRecyclerView);
+
         adapterRecyclerView.setListener(new ComplexAdapterRecyclerView.IClickListener() {
             @Override
             public void onItemClick(Movie movie) {
                 Intent intent = new Intent(MainActivity.this, Rating.class);
                 intent.putExtra(MOVIE,movie);
+                intent.putExtra(IS_POPULAR,movie.getVoteAverage()>5);
                 startActivity(intent);
             }
 
@@ -131,20 +145,32 @@ public class MainActivity extends AppCompatActivity {
      */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        parcelable = recyclerView.getLayoutManager().onSaveInstanceState();
+        Parcelable parcelable = recyclerView.getLayoutManager().onSaveInstanceState();
         outState.putParcelable(PARCEL_KEY,parcelable);
         outState.putParcelable(LIST_KEY,listMovies);
         outState.putInt(PAGE,page);
+        outState.putBoolean("isParse",true);
+        orenta = true;
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
         listMovies = savedInstanceState.getParcelable(LIST_KEY) ;
-        recyclerView.getLayoutManager().onRestoreInstanceState(savedInstanceState.getParcelable(PARCEL_KEY));
+        Parcelable parcelable = savedInstanceState.getParcelable(PARCEL_KEY);
+        manager = new LinearLayoutManager(this);
+        manager.onRestoreInstanceState(parcelable);
         page =  savedInstanceState.getInt(PAGE);
+        isParcelable = savedInstanceState.getBoolean("isParse");
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (isParcelable){
+            setList();
+            setPage();
+        }
+    }
 }

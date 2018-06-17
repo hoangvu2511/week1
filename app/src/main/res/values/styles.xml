@@ -8,4 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CustomRatingBar" parent="Base.Widget.AppCompat.RatingBar.Indicator">
+        <item name="colorAccent">#ffff00</item>
+        <item name="android:maxWidth">300sp</item>
+    </style>
+
 </resources>

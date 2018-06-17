@@ -83,7 +83,7 @@ public class ComplexAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
         int witdh = Resources.getSystem().getDisplayMetrics().widthPixels;
         if (movie != null){
             Glide.with(ctx).load(urlImg+movie.getBackdropPath())
-                    .apply(new RequestOptions().override(witdh-40,600))
+                    .apply(new RequestOptions().override(witdh-40,200))
                     .apply(RequestOptions.bitmapTransform(new RoundedCornersTransformation(30,0)))
                     .into(viewHolderBackDrop.backDrop);
         }
@@ -141,6 +141,7 @@ public class ComplexAdapterRecyclerView extends RecyclerView.Adapter<RecyclerVie
         public void onClick(View view) {
             listener.onItemClick(listMovies.get(getAdapterPosition()));
         }
+
     }
 
     private class ViewHolderBackDrop extends RecyclerView.ViewHolder implements View.OnClickListener {

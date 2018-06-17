@@ -13,18 +13,27 @@
         android:layout_height="wrap_content"
         android:id="@+id/player"
         />
+    <!--show up when there is no video to load-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/error"
+        android:text="@string/Error"
+        android:gravity="center_horizontal"
+        android:textSize="25sp"
+        android:textColor="@color/colorRed"
+        app:layout_constraintTop_toBottomOf="@+id/player"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/player">
+        android:paddingStart="10sp"
+        android:paddingEnd="0sp"
+        app:layout_constraintTop_toBottomOf="@+id/error">
 
-        <ImageView
-            android:id="@+id/imgDetail"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
+        <!--Title-->
         <TextView
             android:id="@+id/title_detail"
             android:layout_width="match_parent"
@@ -33,31 +42,64 @@
             android:textColor="@color/colorWhite"
             android:textSize="22sp" />
 
+        <!--Rating bar-->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingStart="0sp"
+            android:paddingEnd="10sp"
             android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:textSize="22sp"
+                android:layout_gravity="center_vertical"
                 android:text="@string/rate" />
 
-            <RatingBar
-                android:id="@+id/rating"
-                style="@style/Widget.AppCompat.RatingBar.Small"
+            <android.support.v7.widget.AppCompatRatingBar
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:background="@color/colorPrimary"
+                style="@style/CustomRatingBar"
+                android:numStars="5"
+                android:stepSize="0.5"
                 android:isIndicator="false"
-                android:numStars="10"
-                android:stepSize="0.5" />
+                android:id="@+id/rating"
+                />
+
         </LinearLayout>
 
+        <!--Adult-->
+        <TextView
+            android:id="@+id/adult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--vote average-->
+        <TextView
+            android:id="@+id/vote_average"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--Popularity-->
         <TextView
             android:id="@+id/popularity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+
+        <!--Release date-->
+        <TextView
+            android:id="@+id/releaseDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!--Over view-->
+        <TextView
+            android:id="@+id/overViewDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
 
     </LinearLayout>
 
