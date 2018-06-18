@@ -3,7 +3,6 @@ package com.example.vuhoang.flicks.acitvity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatRatingBar;
 import android.view.View;
-import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.example.vuhoang.flicks.Api.InterfaceApi;
@@ -147,11 +146,9 @@ public class Rating extends YouTubeBaseActivity implements YouTubePlayer.OnIniti
 
         overView.setText(movie.getOverview());
 
-        rate.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float v, boolean b) {
-            }
-        });
+        rate.setRating(movie.getVoteAverage().floatValue());
+
+        rate.setIsIndicator(true);
 
         playerView.initialize(YOUTUBE_API_KEY,this);
     }
